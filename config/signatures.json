@@ -1,0 +1,23 @@
+[
+    {
+        "id": "1001",
+        "category": "SQL Injection",
+        "description": "Basic SQL Injection attempt via URL parameters",
+        "pattern": "(?i)(union\\s+select|waitfor\\s+delay|'\\s*or\\s*'1'='1)",
+        "severity": "HIGH"
+    },
+    {
+        "id": "1002",
+        "category": "XSS",
+        "description": "Cross-Site Scripting attempt",
+        "pattern": "(?i)(<script>|javascript:|onerror=|onload=)",
+        "severity": "MEDIUM"
+    },
+    {
+        "id": "1003",
+        "category": "Path Traversal",
+        "description": "Directory traversal attempt (/etc/passwd access)",
+        "pattern": "(\\.\\./\\.\\./|/etc/passwd|/boot.ini)",
+        "severity": "CRITICAL"
+    }
+]

@@ -1,0 +1,12 @@
+app:
+  name: "Log-Prism"
+  version: "1.0.0"
+  debug: false
+
+logging:
+  log_level: "INFO"
+  default_log_dir: "logs/"
+  report_dir: "reports/"
+
+detection:
+  signatures_file: "config/signatures.json"
