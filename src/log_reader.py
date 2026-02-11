@@ -2,25 +2,27 @@ import os
 from typing import Generator
 
 class LogReader:
-
+    """
+    Memory-efficient log reader using Generator pattern.
+    """
 
     def __init__(self, file_path: str):
         self.file_path = file_path
 
     def read_logs(self) -> Generator[str, None, None]:
-
         if not os.path.exists(self.file_path):
-            raise FileNotFoundError(f"HATA: Dosya bulunamadı -> {self.file_path}")
+            raise FileNotFoundError(f"ERROR: File not found -> {self.file_path}")
 
         try:
-            # 'utf-8' ile açıyoruz, okunamayan karakterleri 'replace' ile ? yapıyoruz ki çökmesin.
+            # Open with 'replace' to handle encoding errors gracefully
             with open(self.file_path, 'r', encoding='utf-8', errors='replace') as file:
-                print(f"[*] Dosya okunuyor: {self.file_path}")
+                # [GÜNCELLENDİ] Artık İngilizce mesaj veriyor
+                print(f"[*] Reading file: {self.file_path}")
                 for line in file:
-                    line = line.strip()  # Satır başı/sonu boşluklarını temizle
-                    if line:  # Boş satırları atla
+                    line = line.strip()
+                    if line:
                         yield line
         except PermissionError:
-            print(f"HATA: Dosyayı okumak için yetkiniz yok -> {self.file_path}")
+            print(f"ERROR: Permission denied -> {self.file_path}")
         except Exception as e:
-            print(f"BEKLENMEDİK HATA: {str(e)}")
+            print(f"UNEXPECTED ERROR: {str(e)}")

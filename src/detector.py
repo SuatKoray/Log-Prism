@@ -56,7 +56,7 @@ class Detector:
                         if self.ip_tracker[attacker_ip] == self.BRUTE_FORCE_THRESHOLD:
                             return {
                                 "original_log": line,
-                                "alert_type": "BRUTE FORCE DETECTED",
+                                "alert_type": "BRUTE FORCE",
                                 "severity": "CRITICAL",
                                 "description": f"IP {attacker_ip} reached {self.BRUTE_FORCE_THRESHOLD} failed login attempts!",
                                 "payload": attacker_ip

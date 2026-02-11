@@ -1,0 +1,62 @@
+
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Log-Prism Security Dashboard</title>
+            <style>
+                body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0d1117; color: #c9d1d9; margin: 0; padding: 30px; }
+                h1 { color: #58a6ff; text-align: center; border-bottom: 1px solid #30363d; padding-bottom: 15px; letter-spacing: 1px; }
+                .summary { display: flex; justify-content: center; gap: 40px; background-color: #161b22; padding: 20px; border-radius: 8px; margin-bottom: 30px; border: 1px solid #30363d; }
+                .summary-box { text-align: center; }
+                .summary-box h3 { margin: 0; color: #8b949e; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+                .summary-box p { margin: 10px 0 0 0; font-size: 28px; font-weight: bold; color: #ffffff; }
+                table { width: 100%; border-collapse: collapse; background-color: #161b22; border-radius: 8px; overflow: hidden; border: 1px solid #30363d; }
+                th, td { padding: 15px; text-align: left; border-bottom: 1px solid #30363d; }
+                th { background-color: #21262d; color: #58a6ff; font-weight: 600; text-transform: uppercase; font-size: 13px; }
+                tr:hover { background-color: #1c2128; }
+                .sev-CRITICAL { color: #ff7b72; font-weight: bold; }
+                .sev-HIGH { color: #ffa657; font-weight: bold; }
+                .sev-MEDIUM { color: #e3b341; font-weight: bold; }
+                .sev-LOW { color: #79c0ff; font-weight: bold; }
+                .payload { font-family: 'Courier New', Courier, monospace; background-color: #000000; padding: 5px 8px; border-radius: 4px; color: #a5d6ff; font-size: 13px; }
+            </style>
+        </head>
+        <body>
+            <h1>🛡️ Log-Prism Security Dashboard</h1>
+            <div class="summary">
+                <div class="summary-box">
+                    <h3>Total Threats Detected</h3>
+                    <p>1</p>
+                </div>
+                <div class="summary-box">
+                    <h3>Scan Date</h3>
+                    <p>2026-02-11 22:48:22</p>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Line</th>
+                        <th>Threat Type</th>
+                        <th>Severity</th>
+                        <th>Description</th>
+                        <th>Payload / Target IP</th>
+                    </tr>
+                </thead>
+                <tbody>
+        
+                    <tr>
+                        <td>6</td>
+                        <td>BRUTE FORCE DETECTED</td>
+                        <td class="sev-CRITICAL">CRITICAL</td>
+                        <td>IP 192.168.1.50 reached 5 failed login attempts!</td>
+                        <td class="payload">192.168.1.50</td>
+                    </tr>
+            
+                </tbody>
+            </table>
+        </body>
+        </html>
+        

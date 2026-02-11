@@ -3,86 +3,71 @@ import sys
 import os
 import time
 
-
 sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
 
 from src.log_reader import LogReader
 from src.detector import Detector
 from src.reporter import Reporter
 
-
 SIGNATURES_FILE = "config/signatures.json"
 BANNER = """
-==================================================
-   🛡️  LOG-PRISM | Log Analysis & Threat Tool
-==================================================
+======================================================
+   🛡️  LOG-PRISM | Intelligent Threat Detection Tool
+======================================================
 """
 
 def parse_arguments():
-
-    parser = argparse.ArgumentParser(description="Log-Prism: Python Tabanlı Log Analiz Aracı")
-    
-    parser.add_argument(
-        "-f", "--file", 
-        required=True, 
-        help="Analiz edilecek log dosyasının yolu (Örn: logs/access.log)"
-    )
-    
-    parser.add_argument(
-        "-o", "--output", 
-        default="reports", 
-        help="Raporların kaydedileceği klasör (Varsayılan: reports/)"
-    )
-
+    parser = argparse.ArgumentParser(description="Log-Prism: Python-Based Log Analysis Tool")
+    parser.add_argument("-f", "--file", required=True, help="Path to the log file (e.g., logs/access.log)")
+    parser.add_argument("-o", "--output", default="reports", help="Directory to save reports (Default: reports/)")
     return parser.parse_args()
 
 def main():
     print(BANNER)
     args = parse_arguments()
 
-    # 1. Başlangıç 
     if not os.path.exists(args.file):
-        print(f"❌ HATA: Belirtilen dosya bulunamadı -> {args.file}")
+        print(f"❌ [ERROR] Target file not found -> {args.file}")
         sys.exit(1)
 
-    # 2. Modüller
-    print(f"[*] Motor başlatılıyor...")
-    detector = Detector(SIGNATURES_FILE)
+    print(f"[*] Initializing analysis engine...")
+    try:
+        detector = Detector(SIGNATURES_FILE)
+    except Exception as e:
+        print(f"❌ [FATAL ERROR] Engine failed to start -> {e}")
+        return
+
     reader = LogReader(args.file)
     reporter = Reporter(args.output)
     
     alerts = []
     start_time = time.time()
 
-    # 3. Analiz Döngüsü
-    print(f"[*] Analiz yapılıyor: {args.file}")
+    print(f"[*] Scanning file: {args.file}\n" + "-"*54)
     
     try:
         for line_number, line in enumerate(reader.read_logs(), 1):
             alert = detector.scan_line(line)
             if alert:
-                # Satır numarasını da ekleyelim
                 alert['line_number'] = line_number
                 alerts.append(alert)
-                # Konsola anlık bildirim (Opsiyonel)
-                print(f"   🚨 [SATIR {line_number}] {alert['alert_type']} tespit edildi!")
+                print(f"   🚨 [LINE {line_number}] {alert['alert_type']} ({alert['severity']}) detected!")
 
     except KeyboardInterrupt:
-        print("\n[!] Analiz kullanıcı tarafından durduruldu.")
+        print("\n[!] Scan aborted by user.")
 
     duration = time.time() - start_time
 
-    # 4. Raporlama
-    print("-" * 50)
-    print(f"✅ Analiz Tamamlandı ({duration:.2f} saniye)")
-    print(f"📊 Toplam Tehdit Sayısı: {len(alerts)}")
+    print("-" * 54)
+    print(f"✅ Scan Completed in {duration:.2f} seconds.")
+    print(f"📊 Total Threats Found: {len(alerts)}")
 
     if alerts:
         report_path = reporter.save_report(alerts)
         if report_path:
-            print(f"📄 Rapor kaydedildi: {report_path}")
+            print(f"📄 Dashboard generated: {report_path}")
     else:
-        print("🎉 Log dosyasında şüpheli bir aktivite bulunamadı!")
+        print("🎉 Clean log! No suspicious activity detected.")
 
 if __name__ == "__main__":
     main()
