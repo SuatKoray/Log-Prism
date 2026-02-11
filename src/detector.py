@@ -61,12 +61,10 @@ class Detector:
                                 "description": f"IP {attacker_ip} reached {self.BRUTE_FORCE_THRESHOLD} failed login attempts!",
                                 "payload": attacker_ip
                             }
-                        # Eşik aşılmadıysa, sadece basit bir failure olarak raporlama (gürültü yapma)
                         return None 
                     except IndexError:
                         pass # Regex grubu tutmazsa geç
 
-                # Diğer web saldırıları (SQLi, XSS) için standart dönüş
                 return {
                     "original_log": line,
                     "alert_type": rule['category'],
