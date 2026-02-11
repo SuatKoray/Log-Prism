@@ -46,13 +46,11 @@ class Detector:
             if match:
                 # Eğer SSH hatasıysa (Kategori ID'sine veya ismine bakabiliriz)
                 if rule['category'] == "SSH Failure":
-                    # Regex grubundan IP'yi çek (Pattern'de 2. grup IP idi)
-                    # Pattern: ... user (group 1) from (group 2) ...
+                    
                     try:
                         attacker_ip = match.group(2)
                         self.ip_tracker[attacker_ip] += 1
                         
-                        # Eşik değeri aşıldı mı?
                         if self.ip_tracker[attacker_ip] == self.BRUTE_FORCE_THRESHOLD:
                             return {
                                 "original_log": line,
