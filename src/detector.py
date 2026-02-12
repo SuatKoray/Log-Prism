@@ -3,7 +3,7 @@ import re
 import os
 from typing import List, Dict, Optional
 from collections import defaultdict
-from src.geolocator import Geolocator  # [YENİ] Modülü ekledik
+from src.geolocator import Geolocator  
 
 class Detector:
     """
@@ -15,7 +15,7 @@ class Detector:
         self.compiled_rules = self._compile_rules()
         self.ip_tracker = defaultdict(int)
         self.BRUTE_FORCE_THRESHOLD = 5
-        self.geo_engine = Geolocator() # [YENİ] Coğrafya motorunu başlat
+        self.geo_engine = Geolocator() 
 
     def _load_signatures(self, path: str) -> List[Dict]:
         if not os.path.exists(path):
@@ -73,7 +73,7 @@ class Detector:
                         pass
 
                 # 2. Web Attack Logic (SQLi, XSS)
-                # Try to extract IP from common log formats (usually the first part of the line)
+                
                 ip_match = re.search(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', line)
                 attacker_ip = ip_match.group(0) if ip_match else None
 

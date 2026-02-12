@@ -16,7 +16,7 @@ class Geolocator:
         Queries the API for the given IP address.
         Returns a dictionary with country and ISP info.
         """
-        # 1. Check local cache first (Performance Optimization)
+        # 1. Check local cache first 
         if ip in self.cache:
             return self.cache[ip]
 

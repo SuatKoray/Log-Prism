@@ -14,9 +14,9 @@ class LogReader:
             raise FileNotFoundError(f"ERROR: File not found -> {self.file_path}")
 
         try:
-            # Open with 'replace' to handle encoding errors gracefully
+            
             with open(self.file_path, 'r', encoding='utf-8', errors='replace') as file:
-                # [GÜNCELLENDİ] Artık İngilizce mesaj veriyor
+                
                 print(f"[*] Reading file: {self.file_path}")
                 for line in file:
                     line = line.strip()
