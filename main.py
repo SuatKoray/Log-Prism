@@ -11,9 +11,16 @@ from src.reporter import Reporter
 
 SIGNATURES_FILE = "config/signatures.json"
 BANNER = """
+\033[1;36m
+   __                  ___       _
+  / /  ___   __ _     / _ \_ __ (_)___ _ __ ___
+ / /  / _ \ / _` |___/ /_)/ '__|| / __| '_ ` _ \\
+/ /__| (_) | (_| |__/ ___/| |   | \__ \ | | | | |
+\____/\___/ \__, |  \/    |_|   |_|___/_| |_| |_|
+            |___/
+      🛡️  Intelligent Threat Detection & IPS v1.0
 ======================================================
-   🛡️  LOG-PRISM | Intelligent Threat Detection Tool
-======================================================
+\033[0m
 """
 
 def parse_arguments():
