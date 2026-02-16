@@ -3,11 +3,12 @@ import re
 import os
 from typing import List, Dict, Optional
 from collections import defaultdict
-from src.geolocator import Geolocator  
+from src.geolocator import Geolocator
+from src.blocker import FirewallBlocker
 
 class Detector:
     """
-    Threat detection engine with Regex, Behavioral Analysis, and Geolocation.
+    Threat detection engine with Regex, Behavioral Analysis, Geolocation, and Active Blocking.
     """
 
     def __init__(self, signatures_path: str):
@@ -15,7 +16,8 @@ class Detector:
         self.compiled_rules = self._compile_rules()
         self.ip_tracker = defaultdict(int)
         self.BRUTE_FORCE_THRESHOLD = 5
-        self.geo_engine = Geolocator() 
+        self.geo_engine = Geolocator()
+        self.firewall = FirewallBlocker()
 
     def _load_signatures(self, path: str) -> List[Dict]:
         if not os.path.exists(path):
@@ -53,7 +55,7 @@ class Detector:
         for rule in self.compiled_rules:
             match = rule['regex_obj'].search(line)
             if match:
-                # 1. SSH Brute Force Logic
+                # 1. SSH Brute Force Logic (Active Response)
                 if rule['category'] == "SSH Failure":
                     try:
                         attacker_ip = match.group(2)
@@ -64,16 +66,20 @@ class Detector:
                                 "original_log": line,
                                 "alert_type": "SSH Brute Force",
                                 "severity": "CRITICAL",
-                                "description": f"IP {attacker_ip} reached {self.BRUTE_FORCE_THRESHOLD} failed attempts!",
+                                "description": f"IP {attacker_ip} reached limit!",
                                 "payload": attacker_ip
                             }
-                            return self._enrich_alert(alert, attacker_ip) # [YENİ] Konum ekle
+                            
+                            # [UPDATED] Trigger Active Blocking
+                            print(f"\n⚡ CRITICAL THREAT DETECTED: {attacker_ip} -> Initiating Block...")
+                            self.firewall.block_ip(attacker_ip)
+                            
+                            return self._enrich_alert(alert, attacker_ip)
                         return None 
                     except IndexError:
                         pass
 
-                # 2. Web Attack Logic (SQLi, XSS)
-                
+                # 2. Web Attack Logic
                 ip_match = re.search(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', line)
                 attacker_ip = ip_match.group(0) if ip_match else None
 
@@ -84,5 +90,5 @@ class Detector:
                     "description": rule['description'],
                     "payload": match.group(0)
                 }
-                return self._enrich_alert(alert, attacker_ip) # [YENİ] Konum ekle
+                return self._enrich_alert(alert, attacker_ip)
         return None
