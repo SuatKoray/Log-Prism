@@ -28,6 +28,7 @@ def parse_arguments():
     parser.add_argument("-f", "--file", required=True, help="Path to the log file (e.g., logs/access.log)")
     parser.add_argument("-o", "--output", default="reports", help="Directory to save reports (Default: reports/)")
     return parser.parse_args()
+    parser.add_argument("-v", "--version", action="store_true", help="Show program version and exit")
 
 def main():
     print(BANNER)
