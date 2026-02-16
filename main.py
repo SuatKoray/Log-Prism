@@ -2,6 +2,11 @@ import argparse
 import sys
 import os
 import time
+import colorama
+from colorama import Fore, Style
+
+
+colorama.init(autoreset=True)
 
 sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
 
@@ -10,39 +15,53 @@ from src.detector import Detector
 from src.reporter import Reporter
 
 SIGNATURES_FILE = "config/signatures.json"
-BANNER = """
-\033[1;36m
+
+
+BANNER = fr"""{Fore.CYAN}{Style.BRIGHT}
    __                  ___       _
   / /  ___   __ _     / _ \_ __ (_)___ _ __ ___
- / /  / _ \ / _` |___/ /_)/ '__|| / __| '_ ` _ \\
+ / /  / _ \ / _` |___/ /_)/ '__|| / __| '_ ` _ \
 / /__| (_) | (_| |__/ ___/| |   | \__ \ | | | | |
 \____/\___/ \__, |  \/    |_|   |_|___/_| |_| |_|
             |___/
       🛡️  Intelligent Threat Detection & IPS v1.0
 ======================================================
-\033[0m
-"""
+{Style.RESET_ALL}"""
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Log-Prism: Python-Based Log Analysis Tool")
-    parser.add_argument("-f", "--file", required=True, help="Path to the log file (e.g., logs/access.log)")
+    
+    parser.add_argument("-f", "--file", required=False, help="Path to the log file (e.g., logs/access.log)")
     parser.add_argument("-o", "--output", default="reports", help="Directory to save reports (Default: reports/)")
-    return parser.parse_args()
     parser.add_argument("-v", "--version", action="store_true", help="Show program version and exit")
+    
+    return parser.parse_args()
 
 def main():
     print(BANNER)
     args = parse_arguments()
 
+    # 1. KONTROL: Versiyon sorgusu
+    if args.version:
+        print(f"{Fore.GREEN}Log-Prism v1.0.0 (Stable) - 2026{Style.RESET_ALL}")
+        sys.exit(0)
+
+    # 2. KONTROL: Dosya verilmiş mi?
+    if not args.file:
+        print(f"{Fore.RED}❌ ERROR: You must specify a log file with -f or --file{Style.RESET_ALL}")
+        print(f"{Fore.YELLOW}   Usage: python main.py -f logs/auth.log{Style.RESET_ALL}")
+        sys.exit(1)
+
+    # 3. KONTROL: Dosya var mı?
     if not os.path.exists(args.file):
-        print(f"❌ [ERROR] Target file not found -> {args.file}")
+        print(f"{Fore.RED}❌ [ERROR] Target file not found -> {args.file}{Style.RESET_ALL}")
         sys.exit(1)
 
     print(f"[*] Initializing analysis engine...")
     try:
         detector = Detector(SIGNATURES_FILE)
     except Exception as e:
-        print(f"❌ [FATAL ERROR] Engine failed to start -> {e}")
+        print(f"{Fore.RED}❌ [FATAL ERROR] Engine failed to start -> {e}{Style.RESET_ALL}")
         return
 
     reader = LogReader(args.file)
@@ -59,15 +78,14 @@ def main():
             if alert:
                 alert['line_number'] = line_number
                 alerts.append(alert)
-                print(f"   🚨 [LINE {line_number}] {alert['alert_type']} ({alert['severity']}) detected!")
 
     except KeyboardInterrupt:
-        print("\n[!] Scan aborted by user.")
+        print(f"\n{Fore.YELLOW}[!] Scan aborted by user.{Style.RESET_ALL}")
 
     duration = time.time() - start_time
 
     print("-" * 54)
-    print(f"✅ Scan Completed in {duration:.2f} seconds.")
+    print(f"{Fore.GREEN}✅ Scan Completed in {duration:.2f} seconds.{Style.RESET_ALL}")
     print(f"📊 Total Threats Found: {len(alerts)}")
 
     if alerts:
@@ -75,7 +93,7 @@ def main():
         if report_path:
             print(f"📄 Dashboard generated: {report_path}")
     else:
-        print("🎉 Clean log! No suspicious activity detected.")
+        print(f"{Fore.GREEN}🎉 Clean log! No suspicious activity detected.{Style.RESET_ALL}")
 
 if __name__ == "__main__":
     main()
