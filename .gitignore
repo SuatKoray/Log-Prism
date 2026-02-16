@@ -6,3 +6,10 @@ __pycache__/
 reports/*.json
 reports/*.csv
 .env
+
+# Raporları görmezden gel
+reports/*.json
+reports/*.html
+
+# Ama reports klasörünün kendisi kalsın
+!reports/.gitkeep
