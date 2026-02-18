@@ -56,7 +56,7 @@ class Detector:
         for rule in self.compiled_rules:
             match = rule['regex_obj'].search(line)
             if match:
-                # 1. SSH Brute Force Logic (Active Response)
+                # SSH Brute Force Logic (Active Response)
                 if rule['category'] == "SSH Failure":
                     try:
                         attacker_ip = match.group(2)
@@ -74,7 +74,6 @@ class Detector:
                             # [UPDATED] Trigger Active Blocking
                             print(f"\n⚡ CRITICAL THREAT DETECTED: {attacker_ip} -> Initiating Block...")
 
-                            # [YENİ] 2. BURAYA KOYUYORUZ (ALARM SESİ)
                             # Frekans: 2500Hz (İnce ses), Süre: 1000ms (1 saniye)
                             try:
                                 winsound.Beep(2500, 1000)
@@ -88,7 +87,7 @@ class Detector:
                     except IndexError:
                         pass
 
-                # 2. Web Attack Logic
+                # Web Attack Logic
                 ip_match = re.search(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', line)
                 attacker_ip = ip_match.group(0) if ip_match else None
 
