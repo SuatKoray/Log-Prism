@@ -1,6 +1,7 @@
 import json
 import re
 import os
+import winsound  # Windows Ses Kütüphanesi
 from typing import List, Dict, Optional
 from collections import defaultdict
 from src.geolocator import Geolocator
@@ -72,6 +73,14 @@ class Detector:
                             
                             # [UPDATED] Trigger Active Blocking
                             print(f"\n⚡ CRITICAL THREAT DETECTED: {attacker_ip} -> Initiating Block...")
+
+                            # [YENİ] 2. BURAYA KOYUYORUZ (ALARM SESİ)
+                            # Frekans: 2500Hz (İnce ses), Süre: 1000ms (1 saniye)
+                            try:
+                                winsound.Beep(2500, 1000)
+                            except:
+                                pass 
+
                             self.firewall.block_ip(attacker_ip)
                             
                             return self._enrich_alert(alert, attacker_ip)
