@@ -1,7 +1,7 @@
 import json
 import re
 import os
-import winsound  # Windows Ses Kütüphanesi
+import pyttsx3  #  Sesli Asistan Kütüphanesi
 from typing import List, Dict, Optional
 from collections import defaultdict
 from src.geolocator import Geolocator
@@ -19,6 +19,24 @@ class Detector:
         self.BRUTE_FORCE_THRESHOLD = 5
         self.geo_engine = Geolocator()
         self.firewall = FirewallBlocker()
+        
+        # Ses Motorunu Başlat
+        try:
+            self.voice_engine = pyttsx3.init()
+            self.voice_engine.setProperty('rate', 160)  # Konuşma hızı
+            self.voice_engine.setProperty('volume', 1.0) # Ses seviyesi 
+        except Exception:
+            self.voice_engine = None
+
+    def _play_voice_alert(self):
+        """Profesyonel Siber Asistan Anonsu"""
+        if self.voice_engine:
+            try:
+                # Okunacak Metin
+                self.voice_engine.say("Alert! Critical threat detected. Initiating active defense protocols.")
+                self.voice_engine.runAndWait()
+            except Exception:
+                pass
 
     def _load_signatures(self, path: str) -> List[Dict]:
         if not os.path.exists(path):
@@ -56,7 +74,7 @@ class Detector:
         for rule in self.compiled_rules:
             match = rule['regex_obj'].search(line)
             if match:
-                # SSH Brute Force Logic (Active Response)
+                # 1. SSH Brute Force Logic (Active Response)
                 if rule['category'] == "SSH Failure":
                     try:
                         attacker_ip = match.group(2)
@@ -71,14 +89,10 @@ class Detector:
                                 "payload": attacker_ip
                             }
                             
-                            # [UPDATED] Trigger Active Blocking
                             print(f"\n⚡ CRITICAL THREAT DETECTED: {attacker_ip} -> Initiating Block...")
 
-                            # Frekans: 2500Hz (İnce ses), Süre: 1000ms (1 saniye)
-                            try:
-                                winsound.Beep(2500, 1000)
-                            except:
-                                pass 
+                            #  ASİSTAN
+                            self._play_voice_alert()
 
                             self.firewall.block_ip(attacker_ip)
                             
@@ -87,7 +101,7 @@ class Detector:
                     except IndexError:
                         pass
 
-                # Web Attack Logic
+                # 2. Web Attack Logic
                 ip_match = re.search(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', line)
                 attacker_ip = ip_match.group(0) if ip_match else None
 
