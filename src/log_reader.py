@@ -1,28 +1,30 @@
 import os
-from typing import Generator
+import time
 
 class LogReader:
     """
-    Memory-efficient log reader using Generator pattern.
+    Reads log files statically or tracks them in real-time (Live Tailing).
     """
-
     def __init__(self, file_path: str):
         self.file_path = file_path
 
-    def read_logs(self) -> Generator[str, None, None]:
-        if not os.path.exists(self.file_path):
-            raise FileNotFoundError(f"ERROR: File not found -> {self.file_path}")
-
-        try:
-            
-            with open(self.file_path, 'r', encoding='utf-8', errors='replace') as file:
+    def read_logs(self, live: bool = False):
+        """
+        Yields log lines. If live=True, it waits for new lines indefinitely.
+        """
+        with open(self.file_path, 'r', encoding='utf-8', errors='ignore') as f:
+            if not live:
+                # Normal Okuma: Baştan sona oku ve bitir
+                for line in f:
+                    yield line.strip()
+            else:
+                # Canlı İzleme : Dosyanın sonuna git ve bekle
+                f.seek(0, os.SEEK_END)
+                print("\n👀 LIVE MODE ACTIVE: Waiting for new logs... (Press Ctrl+C to stop)")
                 
-                print(f"[*] Reading file: {self.file_path}")
-                for line in file:
-                    line = line.strip()
-                    if line:
-                        yield line
-        except PermissionError:
-            print(f"ERROR: Permission denied -> {self.file_path}")
-        except Exception as e:
-            print(f"UNEXPECTED ERROR: {str(e)}")
+                while True:
+                    line = f.readline()
+                    if not line:
+                        time.sleep(0.5)  # Yeni satır yoksa yarım saniye uyu, sistemi yorma
+                        continue
+                    yield line.strip()

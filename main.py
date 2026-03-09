@@ -34,6 +34,7 @@ def parse_arguments():
     parser.add_argument("-f", "--file", required=False, help="Path to the log file (e.g., logs/access.log)")
     parser.add_argument("-o", "--output", default="reports", help="Directory to save reports (Default: reports/)")
     parser.add_argument("-v", "--version", action="store_true", help="Show program version and exit")
+    parser.add_argument("-l", "--live", action="store_true", help="Enable live real-time monitoring")
     
     return parser.parse_args()
 
@@ -73,7 +74,7 @@ def main():
     print(f"[*] Scanning file: {args.file}\n" + "-"*54)
     
     try:
-        for line_number, line in enumerate(reader.read_logs(), 1):
+        for line_number, line in enumerate(reader.read_logs(live=args.live), 1):
             alert = detector.scan_line(line)
             if alert:
                 alert['line_number'] = line_number
